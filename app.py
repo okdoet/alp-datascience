@@ -2,8 +2,8 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import pickle
-import plotly.express as px
-import plotly.graph_objects as go
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 # ─── Page Config ────────────────────────────────────────────────────────────
 st.set_page_config(
@@ -297,15 +297,23 @@ page = st.radio(
     label_visibility="collapsed"
 )
 
-# ─── Helper for Plotly Dark Theme ────────────────────────────────────────────
-PLOTLY_THEME = dict(
-    paper_bgcolor='rgba(0,0,0,0)',
-    plot_bgcolor='rgba(0,0,0,0)',
-    font=dict(color='#94a3b8', family='Inter'),
-    xaxis=dict(gridcolor='rgba(0, 240, 255, 0.1)'),
-    yaxis=dict(gridcolor='rgba(0, 240, 255, 0.1)')
-)
-
+# ─── Helper for Seaborn Dark Theme ───────────────────────────────────────────
+def set_dark_theme():
+    plt.style.use('dark_background')
+    sns.set_theme(
+        style="darkgrid",
+        rc={
+            "axes.facecolor": "#0a1128",
+            "figure.facecolor": "#0a1128",
+            "axes.edgecolor": "#00f0ff",
+            "axes.labelcolor": "#e2e8f0",
+            "text.color": "#e2e8f0",
+            "xtick.color": "#e2e8f0",
+            "ytick.color": "#e2e8f0",
+            "grid.color": "rgba(0, 240, 255, 0.1)",
+            "font.family": "sans-serif"
+        }
+    )
 
 if page == "01. Introduction":
     st.markdown("""
@@ -387,7 +395,9 @@ elif page == "02. Visualizations":
     else:
         # Create mapping for labels
         df['Diagnosis'] = df['Hantavirus_Positive'].map({0: 'Negative', 1: 'Positive'})
-        color_map = {'Negative': '#00f0ff', 'Positive': '#ff2a5f'}
+        color_palette = ["#00f0ff", "#ff2a5f"] # Cyan for Negative, Red for Positive
+
+        set_dark_theme()
 
         # ─── Class Distribution ───
         st.markdown('<div class="section-label">Class Distribution Overview</div>', unsafe_allow_html=True)
@@ -404,10 +414,16 @@ elif page == "02. Visualizations":
             </div>
             """, unsafe_allow_html=True)
         with col2:
-            fig_pie = px.pie(df, names='Diagnosis', title='Diagnosis Distribution',
-                             color='Diagnosis', color_discrete_map=color_map, hole=0.6)
-            fig_pie.update_layout(**PLOTLY_THEME, title_font=dict(color='#e2e8f0', family='DM Serif Display', size=24))
-            st.plotly_chart(fig_pie, use_container_width=True)
+            fig1, ax1 = plt.subplots(figsize=(6, 4))
+            sns.countplot(data=df, x='Diagnosis', palette=color_palette, ax=ax1, edgecolor="white", linewidth=1.5)
+            ax1.set_title("Diagnosis Distribution", fontsize=16, pad=15)
+            ax1.set_xlabel("")
+            ax1.set_ylabel("Patient Count")
+            for p in ax1.patches:
+                ax1.annotate(f'{int(p.get_height())}', (p.get_x() + p.get_width() / 2., p.get_height()),
+                             ha='center', va='baseline', fontsize=12, color='white', xytext=(0, 5),
+                             textcoords='offset points')
+            st.pyplot(fig1, transparent=True)
 
 
         # ─── CRP & Creatinine Distributions ───
@@ -421,16 +437,16 @@ elif page == "02. Visualizations":
 
         col_c1, col_c2 = st.columns(2)
         with col_c1:
-            fig_crp = px.box(df, x='Diagnosis', y='CRP_mg/L', color='Diagnosis',
-                             color_discrete_map=color_map, title='CRP Distribution by Diagnosis')
-            fig_crp.update_layout(**PLOTLY_THEME, title_font=dict(color='#e2e8f0', family='DM Serif Display', size=20))
-            st.plotly_chart(fig_crp, use_container_width=True)
+            fig2, ax2 = plt.subplots(figsize=(6, 5))
+            sns.boxplot(data=df, x='Diagnosis', y='CRP_mg/L', palette=color_palette, ax=ax2)
+            ax2.set_title("CRP Distribution by Diagnosis", fontsize=14, pad=10)
+            st.pyplot(fig2, transparent=True)
 
         with col_c2:
-            fig_creat = px.box(df, x='Diagnosis', y='Creatinine_mg/dL', color='Diagnosis',
-                               color_discrete_map=color_map, title='Creatinine Distribution by Diagnosis')
-            fig_creat.update_layout(**PLOTLY_THEME, title_font=dict(color='#e2e8f0', family='DM Serif Display', size=20))
-            st.plotly_chart(fig_creat, use_container_width=True)
+            fig3, ax3 = plt.subplots(figsize=(6, 5))
+            sns.boxplot(data=df, x='Diagnosis', y='Creatinine_mg/dL', palette=color_palette, ax=ax3)
+            ax3.set_title("Creatinine Distribution by Diagnosis", fontsize=14, pad=10)
+            st.pyplot(fig3, transparent=True)
 
 
         # ─── Correlation Heatmap ───
@@ -438,29 +454,23 @@ elif page == "02. Visualizations":
         st.markdown("""
         <div class="content-text">
             The heatmap below shows the correlation coefficient between numerical features. <br>
-            A value close to <strong>1.0</strong> (Bright Cyan/White) indicates a strong positive correlation, while a value close to <strong>-1.0</strong> (Dark Navy/Red) indicates a strong negative correlation. 
+            A value close to <strong>1.0</strong> indicates a strong positive correlation, while a value close to <strong>-1.0</strong> indicates a strong negative correlation. 
             By looking at the row/column for <code>Hantavirus_Positive</code>, you can scientifically identify which lab panels (like WBC, CRP, ALT) most heavily influence the infection status.
         </div>
         """, unsafe_allow_html=True)
 
-        # Select only numerical features for correlation
         numeric_df = df.select_dtypes(include=[np.number])
-        # Drop ID if it exists in numeric accidentally
         corr_matrix = numeric_df.corr()
 
-        fig_corr = px.imshow(corr_matrix, 
-                             text_auto='.2f', 
-                             aspect="auto",
-                             color_continuous_scale=[(0, '#040814'), (0.5, '#0d1635'), (1, '#00f0ff')],
-                             title='Correlation Heatmap of Clinical Variables')
-        
-        fig_corr.update_layout(**PLOTLY_THEME, 
-                               title_font=dict(color='#e2e8f0', family='DM Serif Display', size=24),
-                               height=600)
-        # Adjust text color for readability
-        fig_corr.update_traces(textfont=dict(color='#e2e8f0'))
-        
-        st.plotly_chart(fig_corr, use_container_width=True)
+        fig4, ax4 = plt.subplots(figsize=(10, 8))
+        # Custom diverging colormap matching theme (Cyan to Navy to Red)
+        cmap = sns.diverging_palette(190, 345, s=100, l=45, center="dark", as_cmap=True)
+        sns.heatmap(corr_matrix, annot=True, fmt=".2f", cmap=cmap, ax=ax4, 
+                    linewidths=0.5, linecolor="#040814", cbar_kws={"shrink": .8})
+        ax4.set_title("Correlation Heatmap of Clinical Variables", fontsize=16, pad=20)
+        plt.xticks(rotation=45, ha='right')
+        plt.tight_layout()
+        st.pyplot(fig4, transparent=True)
 
 
 
