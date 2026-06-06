@@ -13,7 +13,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# ─── Global CSS — Midnight Navy & Electric Cyan Premium Theme ───────────────
+# ─── Global CSS — Bright Clinical & Sapphire Theme ──────────────────────────
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap');
@@ -22,23 +22,26 @@ st.markdown("""
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-    --bg-base:      #040814; /* Midnight Navy */
-    --bg-panel:     #0a1128;
-    --bg-card:      #0d1635;
-    --bg-input:     #070d20;
-    --border:       rgba(0, 240, 255, 0.15); /* Electric Cyan border */
-    --border-hover: rgba(0, 240, 255, 0.4);
-    --cyan:         #00f0ff;
-    --cyan-light:   #8aebf1;
-    --cyan-dim:     rgba(0, 240, 255, 0.3);
-    --red:          #ff2a5f;
-    --red-dim:      rgba(255, 42, 95, 0.2);
-    --text-primary: #e2e8f0;
+    --bg-base:      #f8fafc; /* Very light slate */
+    --bg-panel:     #ffffff; /* White */
+    --bg-card:      #ffffff;
+    --bg-input:     #f1f5f9;
+    --border:       #e2e8f0;
+    --border-hover: #94a3b8;
+    --primary:      #0ea5e9; /* Bright Sky Blue */
+    --primary-light:#38bdf8;
+    --primary-dim:  rgba(14, 165, 233, 0.1);
+    --red:          #ef4444;
+    --red-dim:      rgba(239, 68, 68, 0.1);
+    --text-primary: #0f172a; /* Near Black */
     --text-muted:   #64748b;
-    --text-soft:    #94a3b8;
+    --text-soft:    #334155;
     --mono:         'DM Mono', monospace;
     --serif:        'DM Serif Display', serif;
     --sans:         'Inter', sans-serif;
+    --shadow-sm:    0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md:    0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg:    0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
 html, body, [data-testid="stAppViewContainer"] {
@@ -52,9 +55,9 @@ html, body, [data-testid="stAppViewContainer"] {
 [data-testid="stDecoration"], [data-testid="stSidebar"] { display: none !important; }
 
 /* ── Scrollbar ── */
-::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg-base); }
-::-webkit-scrollbar-thumb { background: var(--cyan-dim); border-radius: 2px; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
 
 /* ── App Container ── */
 .block-container {
@@ -73,7 +76,7 @@ div[data-testid="stRadio"] > div {
     border: 1px solid var(--border);
     margin-bottom: 2.5rem;
     gap: 1.5rem;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    box-shadow: var(--shadow-sm);
 }
 div[data-testid="stRadio"] label[data-baseweb="radio"] {
     background: transparent !important;
@@ -85,8 +88,7 @@ div[data-testid="stRadio"] label[data-baseweb="radio"] {
 }
 div[data-testid="stRadio"] label[data-baseweb="radio"]:hover {
     background: var(--bg-input) !important;
-    border-color: var(--cyan-dim) !important;
-    box-shadow: 0 0 15px rgba(0, 240, 255, 0.1);
+    border-color: var(--primary-dim) !important;
 }
 /* Hide the radio circles */
 div[data-testid="stRadio"] div[data-baseweb="radio"] > div:first-child {
@@ -98,9 +100,9 @@ div[data-testid="stRadio"] div[class*="stMarkdown"] p {
     font-size: 0.85rem !important;
     letter-spacing: 1px !important;
     text-transform: uppercase !important;
-    color: var(--cyan-light) !important;
+    color: var(--primary) !important;
     margin: 0 !important;
-    font-weight: 500 !important;
+    font-weight: 600 !important;
 }
 
 /* ── Hero Header ── */
@@ -113,10 +115,10 @@ div[data-testid="stRadio"] div[class*="stMarkdown"] p {
 .hero-eyebrow {
     font-family: var(--mono);
     font-size: 0.75rem;
-    font-weight: 500;
+    font-weight: 600;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: var(--cyan);
+    color: var(--primary);
     margin-bottom: 1rem;
     display: flex;
     align-items: center;
@@ -127,7 +129,7 @@ div[data-testid="stRadio"] div[class*="stMarkdown"] p {
     display: inline-block;
     width: 30px;
     height: 1px;
-    background: var(--cyan);
+    background: var(--primary);
 }
 .hero-title {
     font-family: var(--serif);
@@ -139,13 +141,12 @@ div[data-testid="stRadio"] div[class*="stMarkdown"] p {
 }
 .hero-title em {
     font-style: italic;
-    color: var(--cyan);
-    text-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+    color: var(--primary);
 }
 .hero-sub {
-    font-size: 1rem;
+    font-size: 1.05rem;
     color: var(--text-soft);
-    font-weight: 300;
+    font-weight: 400;
     max-width: 600px;
     line-height: 1.6;
 }
@@ -154,9 +155,10 @@ div[data-testid="stRadio"] div[class*="stMarkdown"] p {
 .section-label {
     font-family: var(--mono);
     font-size: 0.75rem;
+    font-weight: 600;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: var(--cyan);
+    color: var(--primary);
     margin-top: 1rem;
     margin-bottom: 1.5rem;
     display: flex;
@@ -178,8 +180,8 @@ div[data-testid="stRadio"] div[class*="stMarkdown"] p {
     margin-bottom: 1.5rem;
 }
 .content-text strong {
-    color: var(--cyan-light);
-    font-weight: 500;
+    color: var(--primary);
+    font-weight: 600;
 }
 
 /* ── Card Panels ── */
@@ -189,10 +191,13 @@ div[data-testid="stRadio"] div[class*="stMarkdown"] p {
     border-radius: 12px;
     padding: 1.8rem;
     margin-bottom: 1.5rem;
-    transition: border-color 0.3s;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    transition: box-shadow 0.3s, border-color 0.3s;
+    box-shadow: var(--shadow-sm);
 }
-.card-panel:hover { border-color: var(--border-hover); }
+.card-panel:hover { 
+    border-color: var(--border-hover); 
+    box-shadow: var(--shadow-md);
+}
 
 /* ── Form Inputs ── */
 [data-testid="stNumberInput"] input,
@@ -206,8 +211,8 @@ div[data-testid="stRadio"] div[class*="stMarkdown"] p {
 }
 [data-testid="stNumberInput"] input:focus,
 [data-testid="stSelectbox"]:focus-within > div > div {
-    border-color: var(--cyan) !important;
-    box-shadow: 0 0 0 1px var(--cyan) !important;
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 1px var(--primary) !important;
 }
 [data-testid="stNumberInput"] label,
 [data-testid="stSelectbox"] label {
@@ -216,12 +221,13 @@ div[data-testid="stRadio"] div[class*="stMarkdown"] p {
     color: var(--text-muted) !important;
     letter-spacing: 0.05em !important;
     text-transform: uppercase !important;
+    font-weight: 600 !important;
 }
 
 /* ── Buttons ── */
 [data-testid="stButton"] > button[kind="primary"] {
-    background: linear-gradient(135deg, #008f99 0%, #00f0ff 100%) !important;
-    color: #040814 !important;
+    background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 100%) !important;
+    color: #ffffff !important;
     font-family: var(--sans) !important;
     font-weight: 600 !important;
     letter-spacing: 1px !important;
@@ -230,21 +236,22 @@ div[data-testid="stRadio"] div[class*="stMarkdown"] p {
     padding: 0.75rem 2rem !important;
     border-radius: 8px !important;
     transition: transform 0.2s, box-shadow 0.2s !important;
+    box-shadow: var(--shadow-sm) !important;
 }
 [data-testid="stButton"] > button[kind="primary"]:hover {
     transform: translateY(-2px) !important;
-    box-shadow: 0 8px 25px rgba(0, 240, 255, 0.4) !important;
+    box-shadow: var(--shadow-md) !important;
 }
 
 /* ── Results Cards ── */
 .result-positive {
-    background: linear-gradient(135deg, rgba(255, 42, 95, 0.1), transparent);
-    border: 1px solid rgba(255, 42, 95, 0.5);
+    background: var(--red-dim);
+    border: 1px solid rgba(239, 68, 68, 0.4);
     border-radius: 12px; padding: 2rem;
 }
 .result-negative {
-    background: linear-gradient(135deg, rgba(0, 240, 255, 0.1), transparent);
-    border: 1px solid rgba(0, 240, 255, 0.4);
+    background: var(--primary-dim);
+    border: 1px solid rgba(14, 165, 233, 0.4);
     border-radius: 12px; padding: 2rem;
 }
 
@@ -256,15 +263,16 @@ div[data-testid="stRadio"] div[class*="stMarkdown"] p {
     border-radius: 12px;
     margin-bottom: 1rem;
     border-left: 4px solid var(--border);
+    box-shadow: var(--shadow-sm);
 }
 .model-card.winner {
-    border-left: 4px solid var(--cyan);
-    background: linear-gradient(to right, rgba(0, 240, 255, 0.05), transparent);
+    border-left: 4px solid var(--primary);
+    background: var(--primary-dim);
 }
 .model-title {
     font-family: var(--serif);
     font-size: 1.5rem;
-    color: var(--cyan-light);
+    color: var(--primary);
     margin-bottom: 0.5rem;
 }
 </style>
@@ -297,20 +305,20 @@ page = st.radio(
     label_visibility="collapsed"
 )
 
-# ─── Helper for Seaborn Dark Theme ───────────────────────────────────────────
-def set_dark_theme():
-    plt.style.use('dark_background')
+# ─── Helper for Seaborn Light Theme ──────────────────────────────────────────
+def set_light_theme():
+    plt.style.use('default')
     sns.set_theme(
-        style="darkgrid",
+        style="whitegrid",
         rc={
-            "axes.facecolor": "#0a1128",
-            "figure.facecolor": "#0a1128",
-            "axes.edgecolor": "#00f0ff",
-            "axes.labelcolor": "#e2e8f0",
-            "text.color": "#e2e8f0",
-            "xtick.color": "#e2e8f0",
-            "ytick.color": "#e2e8f0",
-            "grid.color": "rgba(0, 240, 255, 0.1)",
+            "axes.facecolor": "#ffffff",
+            "figure.facecolor": "#ffffff",
+            "axes.edgecolor": "#e2e8f0",
+            "axes.labelcolor": "#0f172a",
+            "text.color": "#0f172a",
+            "xtick.color": "#0f172a",
+            "ytick.color": "#0f172a",
+            "grid.color": "#f1f5f9",
             "font.family": "sans-serif"
         }
     )
@@ -395,9 +403,9 @@ elif page == "02. Visualizations":
     else:
         # Create mapping for labels
         df['Diagnosis'] = df['Hantavirus_Positive'].map({0: 'Negative', 1: 'Positive'})
-        color_palette = ["#00f0ff", "#ff2a5f"] # Cyan for Negative, Red for Positive
+        color_palette = ["#0ea5e9", "#ef4444"] # Sky Blue for Negative, Red for Positive
 
-        set_dark_theme()
+        set_light_theme()
 
         # ─── Class Distribution ───
         st.markdown('<div class="section-label">Class Distribution Overview</div>', unsafe_allow_html=True)
@@ -405,7 +413,7 @@ elif page == "02. Visualizations":
         with col1:
             st.markdown("""
             <div class="card-panel" style="height:100%;">
-                <h3 style="color:var(--cyan); font-family:var(--serif); margin-bottom:1rem;">Imbalance in Medical Data</h3>
+                <h3 style="color:var(--primary); font-family:var(--serif); margin-bottom:1rem;">Imbalance in Medical Data</h3>
                 <div class="content-text" style="margin:0;">
                     This chart visualizes the ratio of Positive to Negative Hantavirus cases in our dataset. 
                     <br><br>
@@ -415,13 +423,13 @@ elif page == "02. Visualizations":
             """, unsafe_allow_html=True)
         with col2:
             fig1, ax1 = plt.subplots(figsize=(6, 4))
-            sns.countplot(data=df, x='Diagnosis', palette=color_palette, ax=ax1, edgecolor="white", linewidth=1.5)
+            sns.countplot(data=df, x='Diagnosis', palette=color_palette, ax=ax1, edgecolor="#334155", linewidth=1)
             ax1.set_title("Diagnosis Distribution", fontsize=16, pad=15)
             ax1.set_xlabel("")
             ax1.set_ylabel("Patient Count")
             for p in ax1.patches:
                 ax1.annotate(f'{int(p.get_height())}', (p.get_x() + p.get_width() / 2., p.get_height()),
-                             ha='center', va='baseline', fontsize=12, color='white', xytext=(0, 5),
+                             ha='center', va='baseline', fontsize=12, color='#0f172a', xytext=(0, 5),
                              textcoords='offset points')
             st.pyplot(fig1, transparent=True)
 
@@ -463,10 +471,10 @@ elif page == "02. Visualizations":
         corr_matrix = numeric_df.corr()
 
         fig4, ax4 = plt.subplots(figsize=(10, 8))
-        # Custom diverging colormap matching theme (Cyan to Navy to Red)
-        cmap = sns.diverging_palette(190, 345, s=100, l=45, center="dark", as_cmap=True)
+        # Custom diverging colormap for light theme (Blue to White to Red)
+        cmap = sns.diverging_palette(240, 10, s=90, l=50, center="light", as_cmap=True)
         sns.heatmap(corr_matrix, annot=True, fmt=".2f", cmap=cmap, ax=ax4, 
-                    linewidths=0.5, linecolor="#040814", cbar_kws={"shrink": .8})
+                    linewidths=0.5, linecolor="#ffffff", cbar_kws={"shrink": .8})
         ax4.set_title("Correlation Heatmap of Clinical Variables", fontsize=16, pad=20)
         plt.xticks(rotation=45, ha='right')
         plt.tight_layout()
@@ -560,23 +568,23 @@ elif page == "03. Clinical Prediction":
                     <div style="font-family:var(--mono); font-size:2rem; color:var(--red); margin:1rem 0;">
                         Risk Probability: {pct:.1f}%
                     </div>
-                    <div style="width:100%; height:6px; background:rgba(255,255,255,0.1); border-radius:3px;">
-                        <div style="width:{pct:.1f}%; height:100%; background:var(--red); border-radius:3px;"></div>
+                    <div style="width:100%; height:8px; background:rgba(0,0,0,0.05); border-radius:4px;">
+                        <div style="width:{pct:.1f}%; height:100%; background:var(--red); border-radius:4px;"></div>
                     </div>
                 </div>
                 """, unsafe_allow_html=True)
             else:
                 st.markdown(f"""
                 <div class="result-negative">
-                    <h2 style="color:var(--cyan); font-family:var(--serif); margin-bottom:1rem;">✓ NEGATIVE FOR HANTAVIRUS</h2>
+                    <h2 style="color:var(--primary); font-family:var(--serif); margin-bottom:1rem;">✓ NEGATIVE FOR HANTAVIRUS</h2>
                     <div class="content-text" style="color:var(--text-primary);">
                         The model indicates a <strong>Low Risk</strong> of Hantavirus infection based on the clinical parameters provided.
                     </div>
-                    <div style="font-family:var(--mono); font-size:2rem; color:var(--cyan); margin:1rem 0;">
+                    <div style="font-family:var(--mono); font-size:2rem; color:var(--primary); margin:1rem 0;">
                         Risk Probability: {pct:.1f}%
                     </div>
-                    <div style="width:100%; height:6px; background:rgba(255,255,255,0.1); border-radius:3px;">
-                        <div style="width:{pct:.1f}%; height:100%; background:var(--cyan); border-radius:3px;"></div>
+                    <div style="width:100%; height:8px; background:rgba(0,0,0,0.05); border-radius:4px;">
+                        <div style="width:{pct:.1f}%; height:100%; background:var(--primary); border-radius:4px;"></div>
                     </div>
                 </div>
                 """, unsafe_allow_html=True)
