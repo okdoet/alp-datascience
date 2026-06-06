@@ -13,7 +13,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# ─── Global CSS — Bright Clinical & Sapphire Theme ──────────────────────────
+# ─── Global CSS — Trust & Medical Professional Theme ────────────────────────
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap');
@@ -22,26 +22,33 @@ st.markdown("""
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-    --bg-base:      #f8fafc; /* Very light slate */
-    --bg-panel:     #ffffff; /* White */
+    --bg-base:      #f4f7fb; /* Soft, clean medical background */
+    --bg-panel:     #ffffff; 
     --bg-card:      #ffffff;
-    --bg-input:     #f1f5f9;
+    --bg-input:     #f8fafc;
     --border:       #e2e8f0;
-    --border-hover: #94a3b8;
-    --primary:      #0ea5e9; /* Bright Sky Blue */
-    --primary-light:#38bdf8;
-    --primary-dim:  rgba(14, 165, 233, 0.1);
-    --red:          #ef4444;
-    --red-dim:      rgba(239, 68, 68, 0.1);
-    --text-primary: #0f172a; /* Near Black */
+    --border-hover: #2E8BC0;
+    
+    --primary:      #0A2540; /* Navy - Stable, trusted */
+    --secondary:    #2E8BC0; /* Cyan/Light Blue - Modern */
+    --secondary-dim:rgba(46, 139, 192, 0.1);
+    
+    --safe:         #10B981; /* Emerald - Normal/Safe */
+    --safe-dim:     rgba(16, 185, 129, 0.1);
+    
+    --risk:         #DC2626; /* Maroon - High Risk */
+    --risk-dim:     rgba(220, 38, 38, 0.1);
+    
+    --text-primary: #0A2540; /* Navy text for extreme clarity */
     --text-muted:   #64748b;
     --text-soft:    #334155;
+    
     --mono:         'DM Mono', monospace;
     --serif:        'DM Serif Display', serif;
     --sans:         'Inter', sans-serif;
+    
     --shadow-sm:    0 1px 2px 0 rgba(0, 0, 0, 0.05);
     --shadow-md:    0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    --shadow-lg:    0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
 html, body, [data-testid="stAppViewContainer"] {
@@ -88,7 +95,7 @@ div[data-testid="stRadio"] label[data-baseweb="radio"] {
 }
 div[data-testid="stRadio"] label[data-baseweb="radio"]:hover {
     background: var(--bg-input) !important;
-    border-color: var(--primary-dim) !important;
+    border-color: var(--secondary-dim) !important;
 }
 /* Hide the radio circles */
 div[data-testid="stRadio"] div[data-baseweb="radio"] > div:first-child {
@@ -118,7 +125,7 @@ div[data-testid="stRadio"] div[class*="stMarkdown"] p {
     font-weight: 600;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: var(--primary);
+    color: var(--secondary);
     margin-bottom: 1rem;
     display: flex;
     align-items: center;
@@ -129,19 +136,19 @@ div[data-testid="stRadio"] div[class*="stMarkdown"] p {
     display: inline-block;
     width: 30px;
     height: 1px;
-    background: var(--primary);
+    background: var(--secondary);
 }
 .hero-title {
     font-family: var(--serif);
     font-size: clamp(2.5rem, 5vw, 4rem);
     font-weight: 400;
     line-height: 1.1;
-    color: var(--text-primary);
+    color: var(--primary);
     margin-bottom: 1rem;
 }
 .hero-title em {
     font-style: italic;
-    color: var(--primary);
+    color: var(--secondary);
 }
 .hero-sub {
     font-size: 1.05rem;
@@ -158,7 +165,7 @@ div[data-testid="stRadio"] div[class*="stMarkdown"] p {
     font-weight: 600;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: var(--primary);
+    color: var(--secondary);
     margin-top: 1rem;
     margin-bottom: 1.5rem;
     display: flex;
@@ -195,7 +202,7 @@ div[data-testid="stRadio"] div[class*="stMarkdown"] p {
     box-shadow: var(--shadow-sm);
 }
 .card-panel:hover { 
-    border-color: var(--border-hover); 
+    border-color: var(--secondary); 
     box-shadow: var(--shadow-md);
 }
 
@@ -211,8 +218,8 @@ div[data-testid="stRadio"] div[class*="stMarkdown"] p {
 }
 [data-testid="stNumberInput"] input:focus,
 [data-testid="stSelectbox"]:focus-within > div > div {
-    border-color: var(--primary) !important;
-    box-shadow: 0 0 0 1px var(--primary) !important;
+    border-color: var(--secondary) !important;
+    box-shadow: 0 0 0 1px var(--secondary) !important;
 }
 [data-testid="stNumberInput"] label,
 [data-testid="stSelectbox"] label {
@@ -226,7 +233,7 @@ div[data-testid="stRadio"] div[class*="stMarkdown"] p {
 
 /* ── Buttons ── */
 [data-testid="stButton"] > button[kind="primary"] {
-    background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 100%) !important;
+    background: linear-gradient(135deg, #0A2540 0%, #2E8BC0 100%) !important;
     color: #ffffff !important;
     font-family: var(--sans) !important;
     font-weight: 600 !important;
@@ -245,13 +252,13 @@ div[data-testid="stRadio"] div[class*="stMarkdown"] p {
 
 /* ── Results Cards ── */
 .result-positive {
-    background: var(--red-dim);
-    border: 1px solid rgba(239, 68, 68, 0.4);
+    background: var(--risk-dim);
+    border: 1px solid rgba(220, 38, 38, 0.4);
     border-radius: 12px; padding: 2rem;
 }
 .result-negative {
-    background: var(--primary-dim);
-    border: 1px solid rgba(14, 165, 233, 0.4);
+    background: var(--safe-dim);
+    border: 1px solid rgba(16, 185, 129, 0.4);
     border-radius: 12px; padding: 2rem;
 }
 
@@ -266,8 +273,8 @@ div[data-testid="stRadio"] div[class*="stMarkdown"] p {
     box-shadow: var(--shadow-sm);
 }
 .model-card.winner {
-    border-left: 4px solid var(--primary);
-    background: var(--primary-dim);
+    border-left: 4px solid var(--secondary);
+    background: var(--secondary-dim);
 }
 .model-title {
     font-family: var(--serif);
@@ -314,10 +321,10 @@ def set_light_theme():
             "axes.facecolor": "#ffffff",
             "figure.facecolor": "#ffffff",
             "axes.edgecolor": "#e2e8f0",
-            "axes.labelcolor": "#0f172a",
-            "text.color": "#0f172a",
-            "xtick.color": "#0f172a",
-            "ytick.color": "#0f172a",
+            "axes.labelcolor": "#0A2540",
+            "text.color": "#0A2540",
+            "xtick.color": "#0A2540",
+            "ytick.color": "#0A2540",
             "grid.color": "#f1f5f9",
             "font.family": "sans-serif"
         }
@@ -403,7 +410,7 @@ elif page == "02. Visualizations":
     else:
         # Create mapping for labels
         df['Diagnosis'] = df['Hantavirus_Positive'].map({0: 'Negative', 1: 'Positive'})
-        color_palette = ["#0ea5e9", "#ef4444"] # Sky Blue for Negative, Red for Positive
+        color_palette = ["#10B981", "#DC2626"] # Emerald for Negative, Maroon for Positive
 
         set_light_theme()
 
@@ -429,7 +436,7 @@ elif page == "02. Visualizations":
             ax1.set_ylabel("Patient Count")
             for p in ax1.patches:
                 ax1.annotate(f'{int(p.get_height())}', (p.get_x() + p.get_width() / 2., p.get_height()),
-                             ha='center', va='baseline', fontsize=12, color='#0f172a', xytext=(0, 5),
+                             ha='center', va='baseline', fontsize=12, color='#ffffff', xytext=(0, -20),
                              textcoords='offset points')
             st.pyplot(fig1, transparent=True)
 
@@ -561,30 +568,30 @@ elif page == "03. Clinical Prediction":
             if prediction == 1:
                 st.markdown(f"""
                 <div class="result-positive">
-                    <h2 style="color:var(--red); font-family:var(--serif); margin-bottom:1rem;">⚠ POSITIVE FOR HANTAVIRUS</h2>
+                    <h2 style="color:var(--risk); font-family:var(--serif); margin-bottom:1rem;">⚠ POSITIVE FOR HANTAVIRUS</h2>
                     <div class="content-text" style="color:var(--text-primary);">
                         The model indicates a <strong>High Risk</strong> of Hantavirus infection based on the clinical parameters provided.
                     </div>
-                    <div style="font-family:var(--mono); font-size:2rem; color:var(--red); margin:1rem 0;">
+                    <div style="font-family:var(--mono); font-size:2rem; color:var(--risk); margin:1rem 0;">
                         Risk Probability: {pct:.1f}%
                     </div>
                     <div style="width:100%; height:8px; background:rgba(0,0,0,0.05); border-radius:4px;">
-                        <div style="width:{pct:.1f}%; height:100%; background:var(--red); border-radius:4px;"></div>
+                        <div style="width:{pct:.1f}%; height:100%; background:var(--risk); border-radius:4px;"></div>
                     </div>
                 </div>
                 """, unsafe_allow_html=True)
             else:
                 st.markdown(f"""
                 <div class="result-negative">
-                    <h2 style="color:var(--primary); font-family:var(--serif); margin-bottom:1rem;">✓ NEGATIVE FOR HANTAVIRUS</h2>
+                    <h2 style="color:var(--safe); font-family:var(--serif); margin-bottom:1rem;">✓ NEGATIVE FOR HANTAVIRUS</h2>
                     <div class="content-text" style="color:var(--text-primary);">
                         The model indicates a <strong>Low Risk</strong> of Hantavirus infection based on the clinical parameters provided.
                     </div>
-                    <div style="font-family:var(--mono); font-size:2rem; color:var(--primary); margin:1rem 0;">
+                    <div style="font-family:var(--mono); font-size:2rem; color:var(--safe); margin:1rem 0;">
                         Risk Probability: {pct:.1f}%
                     </div>
                     <div style="width:100%; height:8px; background:rgba(0,0,0,0.05); border-radius:4px;">
-                        <div style="width:{pct:.1f}%; height:100%; background:var(--primary); border-radius:4px;"></div>
+                        <div style="width:{pct:.1f}%; height:100%; background:var(--safe); border-radius:4px;"></div>
                     </div>
                 </div>
                 """, unsafe_allow_html=True)
