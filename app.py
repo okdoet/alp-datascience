@@ -2,16 +2,18 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import pickle
+import plotly.express as px
+import plotly.graph_objects as go
 
 # ─── Page Config ────────────────────────────────────────────────────────────
 st.set_page_config(
-    page_title="HantaDetect — Clinical Prediction",
+    page_title="HantaDetect — Clinical System",
     page_icon="🩺",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="collapsed"
 )
 
-# ─── Global CSS — Obsidian Black & Emerald Green Premium Theme ──────────────
+# ─── Global CSS — Midnight Navy & Electric Cyan Premium Theme ───────────────
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap');
@@ -20,20 +22,20 @@ st.markdown("""
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-    --bg-base:      #050505; /* Obsidian Black */
-    --bg-panel:     #0a0a0a;
-    --bg-card:      #0d0d0d;
-    --bg-input:     #111111;
-    --border:       rgba(16, 185, 129, 0.15); /* Emerald border */
-    --border-hover: rgba(16, 185, 129, 0.4);
-    --emerald:      #10b981;
-    --emerald-light:#34d399;
-    --emerald-dim:  rgba(16, 185, 129, 0.3);
-    --red:          #ef4444;
-    --red-dim:      rgba(239, 68, 68, 0.2);
-    --text-primary: #f8fafc;
-    --text-muted:   #94a3b8;
-    --text-soft:    #cbd5e1;
+    --bg-base:      #040814; /* Midnight Navy */
+    --bg-panel:     #0a1128;
+    --bg-card:      #0d1635;
+    --bg-input:     #070d20;
+    --border:       rgba(0, 240, 255, 0.15); /* Electric Cyan border */
+    --border-hover: rgba(0, 240, 255, 0.4);
+    --cyan:         #00f0ff;
+    --cyan-light:   #8aebf1;
+    --cyan-dim:     rgba(0, 240, 255, 0.3);
+    --red:          #ff2a5f;
+    --red-dim:      rgba(255, 42, 95, 0.2);
+    --text-primary: #e2e8f0;
+    --text-muted:   #64748b;
+    --text-soft:    #94a3b8;
     --mono:         'DM Mono', monospace;
     --serif:        'DM Serif Display', serif;
     --sans:         'Inter', sans-serif;
@@ -47,24 +49,12 @@ html, body, [data-testid="stAppViewContainer"] {
 
 /* Hide Streamlit chrome */
 [data-testid="stToolbar"], footer, #MainMenu,
-[data-testid="stDecoration"] { display: none !important; }
-
-/* ── Sidebar Styling ── */
-[data-testid="stSidebar"] {
-    background: var(--bg-panel) !important;
-    border-right: 1px solid var(--border) !important;
-}
-[data-testid="stSidebar"] .stRadio label {
-    font-family: var(--mono);
-    color: var(--emerald-light) !important;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
+[data-testid="stDecoration"], [data-testid="stSidebar"] { display: none !important; }
 
 /* ── Scrollbar ── */
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: var(--bg-base); }
-::-webkit-scrollbar-thumb { background: var(--emerald-dim); border-radius: 2px; }
+::-webkit-scrollbar-thumb { background: var(--cyan-dim); border-radius: 2px; }
 
 /* ── App Container ── */
 .block-container {
@@ -72,10 +62,51 @@ html, body, [data-testid="stAppViewContainer"] {
     padding: 2rem 3rem 5rem !important;
 }
 
+/* ── Top Horizontal Navigation Bar (Styling st.radio) ── */
+div[data-testid="stRadio"] > div {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    background: var(--bg-panel);
+    padding: 1rem;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    margin-bottom: 2.5rem;
+    gap: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
+div[data-testid="stRadio"] label[data-baseweb="radio"] {
+    background: transparent !important;
+    padding: 0.6rem 1.8rem !important;
+    border-radius: 8px !important;
+    border: 1px solid transparent !important;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+div[data-testid="stRadio"] label[data-baseweb="radio"]:hover {
+    background: var(--bg-input) !important;
+    border-color: var(--cyan-dim) !important;
+    box-shadow: 0 0 15px rgba(0, 240, 255, 0.1);
+}
+/* Hide the radio circles */
+div[data-testid="stRadio"] div[data-baseweb="radio"] > div:first-child {
+    display: none !important;
+}
+/* Style the text inside radio */
+div[data-testid="stRadio"] div[class*="stMarkdown"] p {
+    font-family: var(--mono) !important;
+    font-size: 0.85rem !important;
+    letter-spacing: 1px !important;
+    text-transform: uppercase !important;
+    color: var(--cyan-light) !important;
+    margin: 0 !important;
+    font-weight: 500 !important;
+}
+
 /* ── Hero Header ── */
 .hero-wrap {
     position: relative;
-    padding: 2rem 0 2rem;
+    padding: 1rem 0 2rem;
     margin-bottom: 2rem;
     border-bottom: 1px solid var(--border);
 }
@@ -85,7 +116,7 @@ html, body, [data-testid="stAppViewContainer"] {
     font-weight: 500;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: var(--emerald);
+    color: var(--cyan);
     margin-bottom: 1rem;
     display: flex;
     align-items: center;
@@ -96,7 +127,7 @@ html, body, [data-testid="stAppViewContainer"] {
     display: inline-block;
     width: 30px;
     height: 1px;
-    background: var(--emerald);
+    background: var(--cyan);
 }
 .hero-title {
     font-family: var(--serif);
@@ -108,7 +139,8 @@ html, body, [data-testid="stAppViewContainer"] {
 }
 .hero-title em {
     font-style: italic;
-    color: var(--emerald);
+    color: var(--cyan);
+    text-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
 }
 .hero-sub {
     font-size: 1rem;
@@ -121,10 +153,10 @@ html, body, [data-testid="stAppViewContainer"] {
 /* ── Section Labels ── */
 .section-label {
     font-family: var(--mono);
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: var(--emerald);
+    color: var(--cyan);
     margin-top: 1rem;
     margin-bottom: 1.5rem;
     display: flex;
@@ -146,7 +178,7 @@ html, body, [data-testid="stAppViewContainer"] {
     margin-bottom: 1.5rem;
 }
 .content-text strong {
-    color: var(--emerald-light);
+    color: var(--cyan-light);
     font-weight: 500;
 }
 
@@ -154,11 +186,11 @@ html, body, [data-testid="stAppViewContainer"] {
 .card-panel {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 1.5rem;
+    border-radius: 12px;
+    padding: 1.8rem;
     margin-bottom: 1.5rem;
     transition: border-color 0.3s;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 .card-panel:hover { border-color: var(--border-hover); }
 
@@ -167,15 +199,15 @@ html, body, [data-testid="stAppViewContainer"] {
 [data-testid="stSelectbox"] > div > div {
     background: var(--bg-input) !important;
     border: 1px solid var(--border) !important;
-    border-radius: 5px !important;
+    border-radius: 8px !important;
     color: var(--text-primary) !important;
     font-family: var(--mono) !important;
     font-size: 0.95rem !important;
 }
 [data-testid="stNumberInput"] input:focus,
 [data-testid="stSelectbox"]:focus-within > div > div {
-    border-color: var(--emerald) !important;
-    box-shadow: 0 0 0 1px var(--emerald) !important;
+    border-color: var(--cyan) !important;
+    box-shadow: 0 0 0 1px var(--cyan) !important;
 }
 [data-testid="stNumberInput"] label,
 [data-testid="stSelectbox"] label {
@@ -188,32 +220,32 @@ html, body, [data-testid="stAppViewContainer"] {
 
 /* ── Buttons ── */
 [data-testid="stButton"] > button[kind="primary"] {
-    background: linear-gradient(135deg, #059669 0%, #10b981 100%) !important;
-    color: #ffffff !important;
+    background: linear-gradient(135deg, #008f99 0%, #00f0ff 100%) !important;
+    color: #040814 !important;
     font-family: var(--sans) !important;
     font-weight: 600 !important;
     letter-spacing: 1px !important;
     text-transform: uppercase !important;
     border: none !important;
     padding: 0.75rem 2rem !important;
-    border-radius: 6px !important;
+    border-radius: 8px !important;
     transition: transform 0.2s, box-shadow 0.2s !important;
 }
 [data-testid="stButton"] > button[kind="primary"]:hover {
     transform: translateY(-2px) !important;
-    box-shadow: 0 8px 25px var(--emerald-dim) !important;
+    box-shadow: 0 8px 25px rgba(0, 240, 255, 0.4) !important;
 }
 
 /* ── Results Cards ── */
 .result-positive {
-    background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), transparent);
-    border: 1px solid rgba(239, 68, 68, 0.4);
-    border-radius: 8px; padding: 2rem;
+    background: linear-gradient(135deg, rgba(255, 42, 95, 0.1), transparent);
+    border: 1px solid rgba(255, 42, 95, 0.5);
+    border-radius: 12px; padding: 2rem;
 }
 .result-negative {
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), transparent);
-    border: 1px solid rgba(16, 185, 129, 0.4);
-    border-radius: 8px; padding: 2rem;
+    background: linear-gradient(135deg, rgba(0, 240, 255, 0.1), transparent);
+    border: 1px solid rgba(0, 240, 255, 0.4);
+    border-radius: 12px; padding: 2rem;
 }
 
 /* ── Model Compare Cards ── */
@@ -221,18 +253,18 @@ html, body, [data-testid="stAppViewContainer"] {
     background: var(--bg-card);
     border: 1px solid var(--border);
     padding: 1.5rem;
-    border-radius: 8px;
+    border-radius: 12px;
     margin-bottom: 1rem;
     border-left: 4px solid var(--border);
 }
 .model-card.winner {
-    border-left: 4px solid var(--emerald);
-    background: linear-gradient(to right, rgba(16, 185, 129, 0.05), transparent);
+    border-left: 4px solid var(--cyan);
+    background: linear-gradient(to right, rgba(0, 240, 255, 0.05), transparent);
 }
 .model-title {
     font-family: var(--serif);
     font-size: 1.5rem;
-    color: var(--emerald-light);
+    color: var(--cyan-light);
     margin-bottom: 0.5rem;
 }
 </style>
@@ -256,11 +288,24 @@ def load_data():
     except:
         return pd.DataFrame()
 
-# ─── Navigation ──────────────────────────────────────────────────────────────
-page = st.sidebar.radio(
+# ─── Navigation (Top Taskbar) ────────────────────────────────────────────────
+st.markdown('<div style="margin-top: -2rem;"></div>', unsafe_allow_html=True)
+page = st.radio(
     "Navigation",
-    ["01. Introduction", "02. Data & Methodology", "03. Clinical Prediction"]
+    ["01. Introduction", "02. Visualizations", "03. Clinical Prediction"],
+    horizontal=True,
+    label_visibility="collapsed"
 )
+
+# ─── Helper for Plotly Dark Theme ────────────────────────────────────────────
+PLOTLY_THEME = dict(
+    paper_bgcolor='rgba(0,0,0,0)',
+    plot_bgcolor='rgba(0,0,0,0)',
+    font=dict(color='#94a3b8', family='Inter'),
+    xaxis=dict(gridcolor='rgba(0, 240, 255, 0.1)'),
+    yaxis=dict(gridcolor='rgba(0, 240, 255, 0.1)')
+)
+
 
 if page == "01. Introduction":
     st.markdown("""
@@ -268,7 +313,7 @@ if page == "01. Introduction":
         <div class="hero-eyebrow">Overview</div>
         <h1 class="hero-title">Understanding <em>Hantavirus</em></h1>
         <p class="hero-sub">
-            An introduction to Hantavirus pathogenesis and the clinical dataset used for predictive modeling.
+            An introduction to Hantavirus pathogenesis, the clinical dataset, and our machine learning architecture.
         </p>
     </div>
     """, unsafe_allow_html=True)
@@ -277,9 +322,9 @@ if page == "01. Introduction":
     st.markdown("""
     <div class="content-text">
         <strong>Hantaviruses</strong> are a family of viruses spread mainly by rodents and can cause diverse disease syndromes in people worldwide. 
-        Infection with any hantavirus can produce hantavirus disease in people. Hantaviruses in the Americas are known as "New World" hantaviruses and may cause Hantavirus Pulmonary Syndrome (HPS). Other hantaviruses, known as "Old World" hantaviruses, are found mostly in Europe and Asia and may cause Hemorrhagic Fever with Renal Syndrome (HFRS).
+        Infection with any hantavirus can produce hantavirus disease. Hantaviruses in the Americas are known as "New World" hantaviruses and may cause Hantavirus Pulmonary Syndrome (HPS). Other hantaviruses, known as "Old World" hantaviruses, are found mostly in Europe and Asia and may cause Hemorrhagic Fever with Renal Syndrome (HFRS).
         <br><br>
-        Early symptoms include fatigue, fever, and muscle aches, especially in the large muscle groups. There may also be headaches, dizziness, chills, and abdominal problems. If left untreated, it can lead to severe respiratory and renal complications.
+        Early symptoms include fatigue, fever, and muscle aches. If left untreated, it can lead to severe respiratory and renal complications.
     </div>
     """, unsafe_allow_html=True)
 
@@ -287,43 +332,11 @@ if page == "01. Introduction":
     st.markdown("""
     <div class="content-text">
         The predictive model in this application is built upon a highly specialized clinical dataset containing patient demographics, exposure history, and crucial laboratory panels (Hematology and Biochemistry). 
-        <br><br>
-        By analyzing patterns in these clinical markers—such as white blood cell counts, platelet levels, and liver/kidney enzyme concentrations—we can establish correlations that are highly indicative of Hantavirus infection. This dataset provides the foundation for our machine learning algorithms to assist clinicians in early diagnosis.
+        By analyzing patterns in these clinical markers—such as white blood cell counts, platelet levels, and liver/kidney enzyme concentrations—we can establish correlations that are highly indicative of Hantavirus infection.
     </div>
     """, unsafe_allow_html=True)
 
-
-elif page == "02. Data & Methodology":
-    st.markdown("""
-    <div class="hero-wrap">
-        <div class="hero-eyebrow">Science & Analytics</div>
-        <h1 class="hero-title">Data & <em>Methodology</em></h1>
-        <p class="hero-sub">
-            Scientific explanation of predictive clinical features and the rationale behind our model selection.
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
-
-    st.markdown('<div class="section-label">Predictive Clinical Features</div>', unsafe_allow_html=True)
-    
-    st.markdown("""
-    <div class="card-panel">
-        <div class="content-text" style="margin-bottom:0;">
-            <strong>WBC Count (White Blood Cells) & Platelets:</strong> Hantavirus often triggers an intense immune response, leading to an elevated WBC count (Leukocytosis). Concurrently, the virus affects endothelial cells, leading to a drastic drop in platelets (Thrombocytopenia). The <em>WBC/Platelet Ratio</em> serves as a powerful composite marker for this unique viral signature.<br><br>
-            <strong>CRP (C-Reactive Protein):</strong> A critical marker of systemic inflammation. Extremely high levels of CRP are frequently observed in positive cases due to the severe inflammatory cascade caused by the infection.<br><br>
-            <strong>ALT & AST (Hepatic Panel):</strong> These enzymes indicate liver stress or damage. Hantavirus infection frequently involves hepatic involvement, resulting in elevated ALT and AST levels.<br><br>
-            <strong>BUN & Creatinine (Renal Panel):</strong> For strains causing Hemorrhagic Fever with Renal Syndrome (HFRS), renal failure is a hallmark. Elevated Blood Urea Nitrogen (BUN) and Creatinine levels, and their ratio, directly correlate with acute kidney injury induced by the virus.
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-    st.markdown('<div class="section-label">Dataset Explorer</div>', unsafe_allow_html=True)
-    df = load_data()
-    if not df.empty:
-        st.dataframe(df.head(50), use_container_width=True)
-    else:
-        st.warning("Dataset file (hantavirus_detection_dataset.csv) not found.")
-
+    # ─── Model Selection Moved Here ───
     st.markdown('<div class="section-label">Model Selection Analysis</div>', unsafe_allow_html=True)
     
     st.markdown("""
@@ -336,7 +349,7 @@ elif page == "02. Data & Methodology":
     <div class="model-card">
         <div class="model-title">Random Forest Classifier (Discarded)</div>
         <div class="content-text" style="margin-bottom:0;">
-            The Random Forest model achieved a <strong>100% accuracy</strong> during testing. While this sounds ideal, it is actually highly problematic in a medical context. The model learned to instantly flag a patient as positive if the top 5 influential features (such as CRP) spiked heavily. In other words, if CRP was significantly above average, the model immediately declared the case positive. This indicates severe <em>overfitting</em> to extreme values within our specific dataset. A reliable clinical model should not be 100% blindly certain based merely on extreme values of isolated variables; it must capture the nuance of the overall physiological state.
+            The Random Forest model achieved a <strong>100% accuracy</strong> during testing. While this sounds ideal, it is actually highly problematic in a medical context. The model learned to instantly flag a patient as positive if the top 5 influential features (such as CRP) spiked heavily. In other words, if CRP was significantly above average, the model immediately declared the case positive. This indicates severe <em>overfitting</em> to extreme values. A reliable clinical model should not be blindly certain based merely on isolated extreme variables; it must capture the nuance of the overall physiological state.
         </div>
     </div>
     
@@ -354,6 +367,101 @@ elif page == "02. Data & Methodology":
         </div>
     </div>
     """, unsafe_allow_html=True)
+
+
+elif page == "02. Visualizations":
+    st.markdown("""
+    <div class="hero-wrap">
+        <div class="hero-eyebrow">Data Analytics</div>
+        <h1 class="hero-title">Interactive <em>Visualizations</em></h1>
+        <p class="hero-sub">
+            Scientific explanation of predictive clinical features supported by interactive dataset distributions and correlation analysis.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    df = load_data()
+
+    if df.empty:
+        st.warning("Dataset file not found.")
+    else:
+        # Create mapping for labels
+        df['Diagnosis'] = df['Hantavirus_Positive'].map({0: 'Negative', 1: 'Positive'})
+        color_map = {'Negative': '#00f0ff', 'Positive': '#ff2a5f'}
+
+        # ─── Class Distribution ───
+        st.markdown('<div class="section-label">Class Distribution Overview</div>', unsafe_allow_html=True)
+        col1, col2 = st.columns([1, 1.5])
+        with col1:
+            st.markdown("""
+            <div class="card-panel" style="height:100%;">
+                <h3 style="color:var(--cyan); font-family:var(--serif); margin-bottom:1rem;">Imbalance in Medical Data</h3>
+                <div class="content-text" style="margin:0;">
+                    This chart visualizes the ratio of Positive to Negative Hantavirus cases in our dataset. 
+                    <br><br>
+                    Like most real-world clinical datasets, there is a severe <strong>class imbalance</strong>. Positive cases are rare compared to negative ones. This imbalance is exactly why we initially considered KNN (to handle minority classes effectively) and ultimately chose Logistic Regression (to output probabilities rather than getting skewed by dominant classes).
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+        with col2:
+            fig_pie = px.pie(df, names='Diagnosis', title='Diagnosis Distribution',
+                             color='Diagnosis', color_discrete_map=color_map, hole=0.6)
+            fig_pie.update_layout(**PLOTLY_THEME, title_font=dict(color='#e2e8f0', family='DM Serif Display', size=24))
+            st.plotly_chart(fig_pie, use_container_width=True)
+
+
+        # ─── CRP & Creatinine Distributions ───
+        st.markdown('<div class="section-label">Key Biomarker Distributions</div>', unsafe_allow_html=True)
+        st.markdown("""
+        <div class="content-text">
+            <strong>CRP (C-Reactive Protein):</strong> A critical marker of systemic inflammation. Extremely high levels of CRP are frequently observed in positive cases due to the severe inflammatory cascade caused by the infection.<br>
+            <strong>Creatinine:</strong> Elevated Creatinine levels indicate acute kidney injury, a hallmark of severe Hantavirus strains (HFRS). Notice how the positive cases shift towards higher values.
+        </div>
+        """, unsafe_allow_html=True)
+
+        col_c1, col_c2 = st.columns(2)
+        with col_c1:
+            fig_crp = px.box(df, x='Diagnosis', y='CRP_mg/L', color='Diagnosis',
+                             color_discrete_map=color_map, title='CRP Distribution by Diagnosis')
+            fig_crp.update_layout(**PLOTLY_THEME, title_font=dict(color='#e2e8f0', family='DM Serif Display', size=20))
+            st.plotly_chart(fig_crp, use_container_width=True)
+
+        with col_c2:
+            fig_creat = px.box(df, x='Diagnosis', y='Creatinine_mg/dL', color='Diagnosis',
+                               color_discrete_map=color_map, title='Creatinine Distribution by Diagnosis')
+            fig_creat.update_layout(**PLOTLY_THEME, title_font=dict(color='#e2e8f0', family='DM Serif Display', size=20))
+            st.plotly_chart(fig_creat, use_container_width=True)
+
+
+        # ─── Correlation Heatmap ───
+        st.markdown('<div class="section-label">Feature Correlation Matrix</div>', unsafe_allow_html=True)
+        st.markdown("""
+        <div class="content-text">
+            The heatmap below shows the correlation coefficient between numerical features. <br>
+            A value close to <strong>1.0</strong> (Bright Cyan/White) indicates a strong positive correlation, while a value close to <strong>-1.0</strong> (Dark Navy/Red) indicates a strong negative correlation. 
+            By looking at the row/column for <code>Hantavirus_Positive</code>, you can scientifically identify which lab panels (like WBC, CRP, ALT) most heavily influence the infection status.
+        </div>
+        """, unsafe_allow_html=True)
+
+        # Select only numerical features for correlation
+        numeric_df = df.select_dtypes(include=[np.number])
+        # Drop ID if it exists in numeric accidentally
+        corr_matrix = numeric_df.corr()
+
+        fig_corr = px.imshow(corr_matrix, 
+                             text_auto='.2f', 
+                             aspect="auto",
+                             color_continuous_scale=[(0, '#040814'), (0.5, '#0d1635'), (1, '#00f0ff')],
+                             title='Correlation Heatmap of Clinical Variables')
+        
+        fig_corr.update_layout(**PLOTLY_THEME, 
+                               title_font=dict(color='#e2e8f0', family='DM Serif Display', size=24),
+                               height=600)
+        # Adjust text color for readability
+        fig_corr.update_traces(textfont=dict(color='#e2e8f0'))
+        
+        st.plotly_chart(fig_corr, use_container_width=True)
+
 
 
 elif page == "03. Clinical Prediction":
@@ -435,30 +543,30 @@ elif page == "03. Clinical Prediction":
             if prediction == 1:
                 st.markdown(f"""
                 <div class="result-positive">
-                    <h2 style="color:#ef4444; font-family:var(--serif); margin-bottom:1rem;">⚠ POSITIVE FOR HANTAVIRUS</h2>
-                    <div class="content-text" style="color:#f8fafc;">
+                    <h2 style="color:var(--red); font-family:var(--serif); margin-bottom:1rem;">⚠ POSITIVE FOR HANTAVIRUS</h2>
+                    <div class="content-text" style="color:var(--text-primary);">
                         The model indicates a <strong>High Risk</strong> of Hantavirus infection based on the clinical parameters provided.
                     </div>
-                    <div style="font-family:var(--mono); font-size:2rem; color:#ef4444; margin:1rem 0;">
+                    <div style="font-family:var(--mono); font-size:2rem; color:var(--red); margin:1rem 0;">
                         Risk Probability: {pct:.1f}%
                     </div>
                     <div style="width:100%; height:6px; background:rgba(255,255,255,0.1); border-radius:3px;">
-                        <div style="width:{pct:.1f}%; height:100%; background:#ef4444; border-radius:3px;"></div>
+                        <div style="width:{pct:.1f}%; height:100%; background:var(--red); border-radius:3px;"></div>
                     </div>
                 </div>
                 """, unsafe_allow_html=True)
             else:
                 st.markdown(f"""
                 <div class="result-negative">
-                    <h2 style="color:#10b981; font-family:var(--serif); margin-bottom:1rem;">✓ NEGATIVE FOR HANTAVIRUS</h2>
-                    <div class="content-text" style="color:#f8fafc;">
+                    <h2 style="color:var(--cyan); font-family:var(--serif); margin-bottom:1rem;">✓ NEGATIVE FOR HANTAVIRUS</h2>
+                    <div class="content-text" style="color:var(--text-primary);">
                         The model indicates a <strong>Low Risk</strong> of Hantavirus infection based on the clinical parameters provided.
                     </div>
-                    <div style="font-family:var(--mono); font-size:2rem; color:#10b981; margin:1rem 0;">
+                    <div style="font-family:var(--mono); font-size:2rem; color:var(--cyan); margin:1rem 0;">
                         Risk Probability: {pct:.1f}%
                     </div>
                     <div style="width:100%; height:6px; background:rgba(255,255,255,0.1); border-radius:3px;">
-                        <div style="width:{pct:.1f}%; height:100%; background:#10b981; border-radius:3px;"></div>
+                        <div style="width:{pct:.1f}%; height:100%; background:var(--cyan); border-radius:3px;"></div>
                     </div>
                 </div>
                 """, unsafe_allow_html=True)
