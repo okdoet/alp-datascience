@@ -102,12 +102,15 @@ div[data-testid="stRadio"] div[data-baseweb="radio"] > div:first-child {
     display: none !important;
 }
 /* Style the text inside radio */
+div[data-testid="stRadio"] label, div[data-testid="stRadio"] label * {
+    color: #0A2540 !important;
+}
 div[data-testid="stRadio"] div[class*="stMarkdown"] p {
     font-family: var(--mono) !important;
     font-size: 0.85rem !important;
     letter-spacing: 1px !important;
     text-transform: uppercase !important;
-    color: var(--primary) !important;
+    color: #0A2540 !important;
     margin: 0 !important;
     font-weight: 600 !important;
 }
